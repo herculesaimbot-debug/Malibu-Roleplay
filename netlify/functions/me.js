@@ -3,7 +3,7 @@ const { parseCookies, verifySessionCookie } = require("./_session");
 exports.handler = async (event) => {
   const sessionSecret = process.env.SESSION_SECRET;
   if (!sessionSecret) {
-    return { statusCode: 500, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "SESSION_SECRET faltando." }) };
+    return { statusCode: 500, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" }, body: JSON.stringify({ error: "SESSION_SECRET faltando." }) };
   }
 
   const cookies = parseCookies(event.headers?.cookie || "");
