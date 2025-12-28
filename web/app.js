@@ -203,6 +203,11 @@ function renderProducts(filter=""){
     });
 
     on(bInc, "click", ()=>{
+      if (!isUserLogged()) {
+        toast("Faça login com Discord para comprar.");
+        return;
+      }
+
       cart.set(p.id, (cart.get(p.id)||0) + 1);
       renderProducts(byId("searchInput")?.value || "");
       renderCart();
@@ -268,6 +273,11 @@ function toast(msg){
 
 // ===== Pagamento (Mercado Pago) =====
 async function payNow(){
+  if (!isUserLogged()) {
+    toast("Você precisa estar logado com Discord para finalizar a compra.");
+    return;
+  }
+
   if (cartCount() === 0) return toast("Carrinho vazio. Adicione itens na Loja.");
 
   const name = (byId("buyerName")?.value || "").trim();
@@ -365,6 +375,12 @@ async function refreshDiscordUserUI(){
     safeShow(auth.userBox, false);
   }
 }
+
+// ===== Guard (Login obrigatório para compras) =====
+function isUserLogged(){
+  return document.getElementById("userBox")?.style.display !== "none";
+}
+
 
 // ===== Boot =====
 function bindGlobalUI(){
