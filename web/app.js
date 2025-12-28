@@ -21,7 +21,6 @@ const productsData = [
   { id:"coins_1m",   category:"Dinheiro", name:"1.000.000",  price: 20.00, tag:"Money", desc:"Torne-se um milionário.",        img:"./assets/products/1kk.webp"},
   { id:"coins_2m",   category:"Dinheiro", name:"2.000.000",  price: 35.00, tag:"Money", desc:"Torne-se um milionário.",        img:"./assets/products/2kk.webp"},
   { id:"coins_3m",   category:"Dinheiro", name:"3.000.000",  price: 50.00, tag:"Money", desc:"Torne-se um milionário.",        img:"./assets/products/3kk.webp"},
-  { id:"coins_10m",  category:"Dinheiro", name:"10.000.000", price: 75.00, tag:"Money", desc:"Torne-se um multi-milionário.",  img:"./assets/products/10kk.webp"},
   { id:"coins_10m",  category:"Dinheiro", name:"10.000.000", price: 1.00, tag:"Money", desc:"Torne-se um multi-milionário.",  img:"./assets/products/10kk.webp"},
 
   // Leveis (IDs corrigidos)
