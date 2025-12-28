@@ -356,3 +356,46 @@ body{
 }
 /* mantém o botão de login no fluxo normal */
 #btnLogin{ display: inline-flex; }
+
+/* ===== Avatar dropdown (Discord) ===== */
+.userbox{ position:absolute; right:16px; top:10px; z-index:20; display:flex; align-items:center; gap:10px; }
+.avatar-btn{
+  border:0;
+  background:transparent;
+  padding:0;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+}
+.userbox-avatar{
+  width:36px;
+  height:36px;
+  border-radius:999px;
+  display:block;
+}
+.user-menu{
+  position:absolute;
+  right:0;
+  top:46px;
+  min-width:140px;
+  padding:8px;
+  border-radius:12px;
+  background:rgba(20, 18, 35, 0.92);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 12px 30px rgba(0,0,0,0.35);
+  z-index:999;
+}
+.menu-item{
+  width:100%;
+  border:0;
+  padding:10px 12px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.06);
+  color:#fff;
+  cursor:pointer;
+  text-align:left;
+}
+.menu-item:hover{ background:rgba(255,255,255,0.10); }
+
+.topbar{ position: relative; }
