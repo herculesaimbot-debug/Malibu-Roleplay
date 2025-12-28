@@ -1,4 +1,4 @@
-// const crypto = require("crypto");
+const { randomBytes } = require("node:crypto");
 const { cookie } = require("./_session");
 
 exports.handler = async () => {
@@ -9,7 +9,7 @@ exports.handler = async () => {
     return { statusCode: 500, body: "Env vars faltando (DISCORD_CLIENT_ID / DISCORD_REDIRECT_URI)." };
   }
 
-  const state = crypto.randomBytes(24).toString("hex");
+  const state = randomBytes(24).toString("hex");
 
   const url =
     `https://discord.com/api/oauth2/authorize?client_id=${clientId}` +
