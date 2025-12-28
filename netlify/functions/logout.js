@@ -1,13 +1,15 @@
-export async function handler() {
+const { cookie } = require("./_session");
+
+exports.handler = async () => {
   return {
     statusCode: 200,
-    headers: {
-      "Content-Type": "application/json",
+    multiValueHeaders: {
       "Set-Cookie": [
-        "discord_user=; Path=/; Max-Age=0; Secure; SameSite=Lax",
-        "discord_state=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax"
-      ]
+        cookie("discord_session", "", { maxAge: 0 }),
+        cookie("discord_oauth_state", "", { maxAge: 0 }),
+      ],
     },
-    body: JSON.stringify({ ok: true })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ok: true }),
   };
-}
+};
