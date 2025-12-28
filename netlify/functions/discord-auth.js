@@ -25,9 +25,10 @@ exports.handler = async () => {
 
   return {
     statusCode: 302,
-    multiValueHeaders: {
-      "Set-Cookie": [cookie("discord_oauth_state", state, { maxAge: 10 * 60 })], // 10 min
-      Location: [authUrl.toString()],
+    headers: {
+      "Set-Cookie": cookie("discord_oauth_state", state, { maxAge: 10 * 60 }),
+      "Location": authUrl.toString(),
+      "Cache-Control": "no-store",
     },
     body: "",
   };
