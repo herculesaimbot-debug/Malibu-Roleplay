@@ -1,31 +1,25 @@
-export async function handler(event) {
-  const cookies = Object.fromEntries(
-    (event.headers.cookie || "")
-      .split("; ")
-      .filter(Boolean)
-      .map((c) => c.split("="))
-  );
+const { parseCookies, verifySessionCookie } = require("./_session");
 
-  if (!cookies.discord_user) {
+exports.handler = async (event) => {
+  const sessionSecret = process.env.SESSION_SECRET;
+  if (!sessionSecret) {
+    return { statusCode: 500, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "SESSION_SECRET faltando." }) };
+  }
+
+  const cookies = parseCookies(event.headers?.cookie || "");
+  const session = verifySessionCookie(cookies.discord_session, sessionSecret);
+
+  if (!session) {
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ logged: false })
+      headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+      body: JSON.stringify({ logged: false }),
     };
   }
 
-  try {
-    const user = JSON.parse(Buffer.from(cookies.discord_user, "base64").toString());
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ logged: true, user })
-    };
-  } catch {
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ logged: false })
-    };
-  }
-}
+  return {
+    statusCode: 200,
+    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+    body: JSON.stringify({ logged: true, user: session.user }),
+  };
+};
