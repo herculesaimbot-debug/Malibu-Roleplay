@@ -28,17 +28,12 @@
       <button class="nav-btn" data-page="team">Equipe</button>
       <button class="nav-btn cart-btn" data-page="checkout">
         Carrinho <span class="pill" id="cartCount">0</span>
-      </button>
-      <button class="nav-btn" id="btnLogin">Login com Discord</button>
+    <button class="nav-btn" id="btnLogin">Login com Discord</button>
 
       <div id="userBox" class="userbox" style="display:none">
         <img id="avatar" class="userbox-avatar" alt="Avatar do Discord" />
-        <div class="userbox-meta">
-          <div class="userbox-row">
-            <span id="username" class="userbox-name"></span>
-            <span id="badgeDiscord" class="discord-badge">Logado com Discord</span>
-          </div>
-          <button class="btn ghost" id="btnLogout" type="button">Sair</button>
+        <div id="userMenu" class="userbox-menu" style="display:none">
+          <button id="btnLogout" type="button">Sair</button>
         </div>
       </div>
     </nav>
