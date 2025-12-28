@@ -9,6 +9,7 @@ exports.handler = async (event) => {
   if (!clientId || !clientSecret || !redirectUri || !sessionSecret) {
     return {
       statusCode: 500,
+      headers: { "Cache-Control": "no-store" },
       body: "Env vars faltando (DISCORD_CLIENT_ID / DISCORD_CLIENT_SECRET / DISCORD_REDIRECT_URI / SESSION_SECRET).",
     };
   }
@@ -21,10 +22,9 @@ exports.handler = async (event) => {
   const savedState = cookies.discord_oauth_state;
 
   if (!code || !state || !savedState || state !== savedState) {
-    return { statusCode: 400, body: "OAuth state inválido. Tente novamente." };
+    return { statusCode: 400, headers: { "Cache-Control": "no-store" }, body: "OAuth state inválido. Tente novamente." };
   }
 
-  // 1) troca code -> token
   const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -39,17 +39,16 @@ exports.handler = async (event) => {
 
   const tokenData = await tokenRes.json();
   if (!tokenRes.ok) {
-    return { statusCode: 400, body: `Falha ao obter token: ${JSON.stringify(tokenData)}` };
+    return { statusCode: 400, headers: { "Cache-Control": "no-store" }, body: `Falha ao obter token: ${JSON.stringify(tokenData)}` };
   }
 
-  // 2) pega usuário
   const meRes = await fetch("https://discord.com/api/users/@me", {
     headers: { Authorization: `Bearer ${tokenData.access_token}` },
   });
 
   const me = await meRes.json();
   if (!meRes.ok) {
-    return { statusCode: 400, body: `Falha ao obter usuário: ${JSON.stringify(me)}` };
+    return { statusCode: 400, headers: { "Cache-Control": "no-store" }, body: `Falha ao obter usuário: ${JSON.stringify(me)}` };
   }
 
   const user = {
@@ -59,16 +58,14 @@ exports.handler = async (event) => {
     email: me.email || null,
   };
 
-  const sessionValue = createSessionCookie(user, sessionSecret, 60 * 60 * 24 * 7); // 7 dias
+  const sessionValue = createSessionCookie(user, sessionSecret, 60 * 60 * 24 * 7);
 
   return {
     statusCode: 302,
-    multiValueHeaders: {
-      "Set-Cookie": [
-        cookie("discord_session", sessionValue, { maxAge: 60 * 60 * 24 * 7 }),
-        cookie("discord_oauth_state", "", { maxAge: 0 }),
-      ],
-      Location: ["/#home"],
+    headers: {
+      "Set-Cookie": cookie("discord_session", sessionValue, { maxAge: 60 * 60 * 24 * 7 }),
+      "Location": "/#home",
+      "Cache-Control": "no-store",
     },
     body: "",
   };
