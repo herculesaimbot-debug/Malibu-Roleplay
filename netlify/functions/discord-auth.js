@@ -1,21 +1,34 @@
-import crypto from "crypto";
+const crypto = require("crypto");
+const { cookie } = require("./_session");
 
-export async function handler() {
-  const state = crypto.randomBytes(16).toString("hex");
+exports.handler = async () => {
+  const clientId = process.env.DISCORD_CLIENT_ID;
+  const redirectUri = process.env.DISCORD_REDIRECT_URI;
 
-  const params = new URLSearchParams({
-    client_id: process.env.DISCORD_CLIENT_ID,
-    redirect_uri: `${process.env.S1TE_URL}/.netlify/functions/discord-callback`,
-    response_type: "code",
-    scope: "identify",
-    state
-  });
+  if (!clientId || !redirectUri) {
+    return {
+      statusCode: 500,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Env vars DISCORD_CLIENT_ID / DISCORD_REDIRECT_URI faltando." }),
+    };
+  }
+
+  const state = crypto.randomBytes(24).toString("hex");
+
+  const authUrl = new URL("https://discord.com/api/oauth2/authorize");
+  authUrl.searchParams.set("client_id", clientId);
+  authUrl.searchParams.set("redirect_uri", redirectUri);
+  authUrl.searchParams.set("response_type", "code");
+  authUrl.searchParams.set("scope", "identify email");
+  authUrl.searchParams.set("state", state);
+  authUrl.searchParams.set("prompt", "consent");
 
   return {
     statusCode: 302,
-    headers: {
-      Location: `https://discord.com/oauth2/authorize?${params.toString()}`,
-      "Set-Cookie": `discord_state=${state}; HttpOnly; Secure; Path=/; SameSite=Lax`
-    }
+    multiValueHeaders: {
+      "Set-Cookie": [cookie("discord_oauth_state", state, { maxAge: 10 * 60 })], // 10 min
+      Location: [authUrl.toString()],
+    },
+    body: "",
   };
-}
+};
