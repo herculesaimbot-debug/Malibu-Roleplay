@@ -1,415 +1,44 @@
-// ===== Malibu Roleplay Config =====
-const DISCORD_INVITE_URL = ""; // ex: "https://discord.gg/SEULINK"
-const CONNECT_CMD = ""; // quando tiver IP: "connect SEU_IP_AQUI:30120"
+/* Patch v2 — evita sobreposição/overlap do login com carrinho */
 
-// Se o Discord redirecionar pra HOME com ?code&state, encaminha pro callback real
-(function forwardDiscordCallback() {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-    const state = params.get("state");
-    if (code && state) {
-      window.location.href = `/.netlify/functions/discord-callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
-    }
-  } catch {}
-})();
-
-
-const pages = ["home","store","rules","team","checkout"];
-
-const categories = ["VIPs", "Dinheiro", "Leveis", "Organizações", "Unban"];
-let activeCategory = "VIPs";
-
-const productsData = [
-  // ===== VIPs =====
-  { id:"vip_bronze", category:"VIPs", name:"VIP Bronze(30 dias)", price: 23.99, tag:"VIP", desc:"Prioridade + bônus de salário + perks exclusivos." , img:"./assets/products/bronze.webp"},
-  { id:"vip_prata", category:"VIPs", name:"VIP Prata (30 dias)", price: 28.99, tag:"VIP", desc:"Prioridade alta + benefícios premium + fila turbo." , img:"./assets/products/prata.webp"},
-  { id:"vip_ouro", category:"VIPs", name:"VIP Ouro (30 dias)", price: 33.99, tag:"VIP", desc:"Prioridade alta + benefícios premium + fila turbo." , img:"./assets/products/ouro.webp"},
-  { id:"vip_platina", category:"VIPs", name:"VIP Platina (30 dias)", price: 38.99, tag:"VIP", desc:"Prioridade alta + benefícios premium + fila turbo." , img:"./assets/products/platina.webp"},
-  { id:"vip_diamante", category:"VIPs", name:"VIP Diamante (30 dias)", price: 48.99, tag:"VIP", desc:"Prioridade alta + benefícios premium + fila turbo." , img:"./assets/products/diamante.webp"},
-
-  // ===== Dinheiro / Créditos =====
-  { id:"coins_50k", category:"Dinheiro", name:"1.000.000", price: 20.00, tag:"Money", desc:"Torne-se um milonario." , img:"./assets/products/1kk.webp"},
-  { id:"coins_150k", category:"Dinheiro", name:"2.000.000", price: 35.00, tag:"Money", desc:"Torne-se um milonario." , img:"./assets/products/2kk.webp"},
-  { id:"coins_150k", category:"Dinheiro", name:"3.000.000", price: 50.00, tag:"Money", desc:"Torne-se um milonario." , img:"./assets/products/3kk.webp"},
-  { id:"coins_150k", category:"Dinheiro", name:"10.000.000", price: 75.00, tag:"Money", desc:"Torne-se um multi-milonario." , img:"./assets/products/10kk.webp"},
-
-  // ===== Leveis =====
- 
-  { id:"level_pro", category:"Leveis", name:"Level 50", price: 30.00, tag:"Level", desc:"Após a compra, abra um ticket." , img:"./assets/products/50.webp"},
-  { id:"level_pro", category:"Leveis", name:"Level 100", price: 43.00, tag:"Level", desc:"Após a compra, abra um ticket." , img:"./assets/products/100.webp"},
-  { id:"level_pro", category:"Leveis", name:"Level 150", price: 60.00, tag:"Level", desc:"Após a compra, abra um ticket." , img:"./assets/products/150.webp"},
-  { id:"level_pro", category:"Leveis", name:"Level 200", price: 75.00, tag:"Level", desc:"Após a compra, abra um ticket." , img:"./assets/products/200.webp"},
-
-  // ===== Organizações =====
-  { id:"org_create", category:"Organizações", name:"Organização policial", price: 35.90, tag:"Org", desc:"Entrega Manual." , img:"./assets/products/cop.webp"},
-  { id:"org_upgrade", category:"Organizações", name:"Organização criminosa", price: 35.90, tag:"Org", desc:"Entrega Manual." , img:"./assets/products/fac.webp"},
-  { id:"org_upgrade", category:"Organizações", name:"Organização medico", price: 35.90, tag:"Org", desc:"Entrega Manual." , img:"./assets/products/med.webp"},
-  { id:"org_upgrade", category:"Organizações", name:"Organização mecanico", price: 45.90, tag:"Org", desc:"Entrega manual." , img:"./assets/products/mec.webp"},
-
-  // ===== Unban =====
-  { id:"unban", category:"Unban", name:"Desban Serial", price: 100.00, tag:"Serviço", desc:"1 UN.", img:"./assets/products/serial.webp" },
-  { id:"unban", category:"Unban", name:"Desban Conta", price: 50.00, tag:"Serviço", desc:"1 UN.", img:"./assets/products/conta.webp" },
-  { id:"unban", category:"Unban", name:"Desban Discord", price: 14.99, tag:"Serviço", desc:"1 UN.", img:"./assets/products/discord.webp" },
-];
-
-
-const teamData = [
-  { name:"AQUILES", role:"Fundador • Malibu Roleplay", bio:"Direção do projeto, decisões finais e visão do RP.", links:[["Discord","#"],["Instagram","#"]] },
-  { name:"AnNy", role:"Fundadora • Malibu Roleplay", bio:"Administração geral, organização e padronização das regras e experiência do RP.", links:[["Discord","#"],["Instagram","#"]] },
-  { name:"VT", role:"Programador • Malibu Roleplay", bio:"Desenvolvimento de scripts, estabilidade, otimização e segurança do servidor.", links:[["Discord","#"],["Instagram","#"]] },
-];
-
-const cart = new Map();
-window.__AUTH_LOGGED__ = false;
-const fmtBRL = (v) => v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-
-function setPage(page){
-  if (page === "checkout" && !window.__AUTH_LOGGED__) {
-    toast("Faça login com Discord para acessar o checkout.");
-    window.location.href = "/.netlify/functions/discord-auth";
-    return;
-  }
-  pages.forEach(p=>{
-    document.getElementById(`page-${p}`).classList.toggle("show", p===page);
-  });
-
-  document.querySelectorAll(".nav-btn").forEach(b=>{
-    b.classList.toggle("active", b.dataset.page===page);
-  });
-
-  // salva a aba atual na URL
-  window.location.hash = page;
-
-  window.scrollTo({ top:0, behavior:"smooth" });
+/* Garanta que o container do topo seja flex e tenha espaço */
+.topbar,
+.header,
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-function cartCount(){
-  let n = 0;
-  for (const qty of cart.values()) n += qty;
-  return n;
-}
-function cartTotal(){
-  let total = 0;
-  for (const [id, qty] of cart.entries()){
-    const p = productsData.find(x=>x.id===id);
-    total += (p?.price || 0) * qty;
-  }
-  return total;
+/* Se seu nav tiver outra classe, este seletor ainda ajuda sem quebrar */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap; /* evita empilhar/encobrir botões em telas menores */
 }
 
-function renderCart(){
-  document.getElementById("cartCount").textContent = cartCount();
-  const box = document.getElementById("cartItems");
-  const totalEl = document.getElementById("cartTotal");
-  totalEl.textContent = fmtBRL(cartTotal());
-
-  if (cartCount() === 0){
-    box.innerHTML = `<div class="muted">Seu carrinho está vazio. Vá na Loja e adicione produtos.</div>`;
-    return;
-  }
-
-  box.innerHTML = "";
-  for (const [id, qty] of cart.entries()){
-    const p = productsData.find(x=>x.id===id);
-    const row = document.createElement("div");
-    row.className = "cart-item";
-    row.innerHTML = `
-      <div class="left">
-        <div class="title">${p.name}</div>
-        <div class="sub">${qty} × ${fmtBRL(p.price)} • <span class="muted">${p.tag}</span></div>
-      </div>
-      <div class="actions">
-        <button data-act="dec" data-id="${id}">-</button>
-        <strong>${qty}</strong>
-        <button data-act="inc" data-id="${id}">+</button>
-        <button data-act="del" data-id="${id}">Remover</button>
-      </div>
-    `;
-    box.appendChild(row);
-  }
-
-  box.querySelectorAll("button").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      const id = btn.dataset.id;
-      const act = btn.dataset.act;
-      if (act==="inc") cart.set(id, (cart.get(id)||0)+1);
-      if (act==="dec") cart.set(id, Math.max(1, (cart.get(id)||1)-1));
-      if (act==="del") cart.delete(id);
-      renderCart();
-      renderProducts(document.getElementById("searchInput")?.value || "");
-    });
-  });
+/* Botões sempre acima e clicáveis */
+.nav-btn {
+  position: relative;
+  z-index: 1;
 }
 
-function renderProducts(filter=""){
-  const wrap = document.getElementById("products");
-  wrap.innerHTML = "";
-  const q = filter.trim().toLowerCase();
-
-  const items = productsData.filter(p => {
-    const inCat = (activeCategory === "Todos") || (p.category === activeCategory);
-    const inSearch = (!q) || p.name.toLowerCase().includes(q) || (p.tag||"").toLowerCase().includes(q);
-    return inCat && inSearch;
-  });
-
-  if (items.length === 0){
-    wrap.innerHTML = `<div class="card"><div class="muted">Nenhum produto nessa aba (ou nessa busca).</div></div>`;
-    return;
-  }
-
-  items.forEach(p=>{
-    const el = document.createElement("div");
-    el.className = "prod";
-    const qty = cart.get(p.id) || 0;
-
-    el.innerHTML = `
-      <div class="prod-img"><img src="${p.img}" alt="${p.name}"></div>
-      <span class="badge">${p.tag}</span>
-      <div class="name">${p.name}</div>
-      <div class="muted small">${p.desc}</div>
-      <div class="row">
-        <div>
-          <div class="price">${fmtBRL(p.price)}</div>
-          <div class="muted small">Entrega manual pela staff</div>
-        </div>
-        <div class="qty">
-          <button data-act="dec">-</button>
-          <span>${qty}</span>
-          <button data-act="inc">+</button>
-        </div>
-      </div>
-    `;
-
-    const buttons = el.querySelectorAll("button");
-    const bDec = buttons[0];
-    const bInc = buttons[1];
-
-    bDec.addEventListener("click", ()=>{
-      if (!cart.has(p.id)) return;
-      const n = cart.get(p.id);
-      if (n<=1) cart.delete(p.id); else cart.set(p.id, n-1);
-      renderProducts(document.getElementById("searchInput").value);
-      renderCart();
-    });
-    bInc.addEventListener("click", ()=>{
-      cart.set(p.id, (cart.get(p.id)||0)+1);
-      renderProducts(document.getElementById("searchInput").value);
-      renderCart();
-    });
-
-    wrap.appendChild(el);
-  });
+/* Userbox NÃO fica absoluto: não encobre botões */
+.userbox {
+  position: relative !important;
+  right: auto !important;
+  top: auto !important;
+  z-index: 2;
+  margin-left: 10px;
 }
 
-function renderTeam(){
-  const wrap = document.getElementById("teamCards");
-  wrap.innerHTML = "";
-  teamData.forEach((m)=>{
-    const el = document.createElement("div");
-    el.className = "member";
-    el.innerHTML = `
-      <div class="avatar">${m.name.slice(0,1).toUpperCase()}</div>
-      <div class="name">${m.name}</div>
-      <div class="role">${m.role}</div>
-      <div class="bio">${m.bio}</div>
-      <div class="links">
-        ${m.links.map(l=>`<a href="${l[1]}" target="_blank" rel="noopener">${l[0]}</a>`).join("")}
-      </div>
-    `;
-    wrap.appendChild(el);
-  });
+/* Quando escondido inline no HTML (style="display:none"), sem clique */
+.userbox[style*="display:none"] {
+  pointer-events: none;
 }
 
-function toast(msg){
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"), 3400);
+/* Opcional: mantém o botão Login sempre do mesmo tamanho visual */
+#btnLogin {
+  white-space: nowrap;
 }
-
-async function payNow(){
-  if (!window.__AUTH_LOGGED__) {
-    toast("Você precisa estar logado com Discord para finalizar a compra.");
-    window.location.href = "/.netlify/functions/discord-auth";
-    return;
-  }
-  if (cartCount()===0) return toast("Carrinho vazio. Adicione itens na Loja.");
-  const name = document.getElementById("buyerName").value.trim();
-  const email = document.getElementById("buyerEmail").value.trim();
-  if (!name || !email) return toast("Preencha nome e e-mail.");
-
-  const items = [];
-  for (const [id, qty] of cart.entries()){
-    const p = productsData.find(x=>x.id===id);
-    items.push({ id, title:p.name, unit_price:p.price, quantity:qty });
-  }
-
-  try{
-    const res = await fetch(`/.netlify/functions/mp_create_preference`,{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ buyer:{name,email}, items })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data?.error || "Falha no Mercado Pago");
-    window.location.href = data.init_point;
-  }catch(err){
-    toast(err?.message || "Erro ao iniciar pagamento.");
-  }
-}
-
-// Discord modal
-function openDiscordModal(){
-  const modal = document.getElementById("discordModal");
-  modal.classList.add("show");
-  modal.setAttribute("aria-hidden", "false");
-  const inviteText = document.getElementById("discordInviteText");
-  inviteText.textContent = DISCORD_INVITE_URL ? DISCORD_INVITE_URL : "Ainda não definido";
-}
-function closeDiscordModal(){
-  const modal = document.getElementById("discordModal");
-  modal.classList.remove("show");
-  modal.setAttribute("aria-hidden", "true");
-}
-
-// Init
-document.getElementById("year").textContent = new Date().getFullYear();
-
-document.querySelectorAll(".nav-btn").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    const page = btn.dataset.page;
-    if (page){
-      setPage(page);
-      renderCart();
-    }
-  });
-});
-
-document.getElementById("btnGoStore").addEventListener("click",(e)=>{e.preventDefault(); setPage("store");});
-document.getElementById("btnGoStore2").addEventListener("click",(e)=>{e.preventDefault(); setPage("store");});
-
-document.getElementById("btnCopyIP").addEventListener("click",(e)=>{
-  e.preventDefault();
-  if (!CONNECT_CMD){
-    toast("IP ainda não definido. Assim que tiver, eu coloco o connect aqui.");
-    return;
-  }
-  navigator.clipboard.writeText(CONNECT_CMD);
-  toast(`Connect copiado: ${CONNECT_CMD}`);
-});
-
-document.getElementById("btnClearCart").addEventListener("click", ()=>{
-  cart.clear();
-  renderProducts(document.getElementById("searchInput").value);
-  renderCart();
-});
-
-document.getElementById("btnPay").addEventListener("click", payNow);
-document.getElementById("searchInput").addEventListener("input",(e)=> renderProducts(e.target.value));
-
-renderCategoryTabs();
-renderProducts("");
-renderTeam();
-renderCart();
-
-// Banner buttons
-const btnBannerStore = document.getElementById("btnBannerStore");
-if (btnBannerStore) btnBannerStore.addEventListener("click", ()=> setPage("store"));
-const btnBannerDiscord = document.getElementById("btnBannerDiscord");
-if (btnBannerDiscord) btnBannerDiscord.addEventListener("click", openDiscordModal);
-
-// Discord open/close
-document.getElementById("btnDiscord").addEventListener("click", openDiscordModal);
-document.getElementById("btnDiscordFloat").addEventListener("click", openDiscordModal);
-document.getElementById("discordClose").addEventListener("click", closeDiscordModal);
-document.getElementById("discordModal").addEventListener("click", (e)=>{ if (e.target?.dataset?.close) closeDiscordModal(); });
-
-document.getElementById("btnCopyDiscord").addEventListener("click", async ()=>{
-  if (!DISCORD_INVITE_URL) return toast("Discord ainda não definido. Me envie o link do convite.");
-  await navigator.clipboard.writeText(DISCORD_INVITE_URL);
-  toast("Convite do Discord copiado!");
-});
-document.getElementById("btnOpenDiscord").addEventListener("click", ()=>{
-  if (!DISCORD_INVITE_URL) return toast("Discord ainda não definido. Me envie o link do convite.");
-  window.open(DISCORD_INVITE_URL, "_blank");
-});
-
-
-function renderCategoryTabs(){
-  const wrap = document.getElementById("categoryTabs");
-  if (!wrap) return;
-  wrap.innerHTML = "";
-  categories.forEach(cat=>{
-    const b = document.createElement("button");
-    b.className = "tab" + (cat === activeCategory ? " active" : "");
-    b.type = "button";
-    b.textContent = cat;
-    b.addEventListener("click", ()=>{
-      activeCategory = cat;
-      wrap.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-      b.classList.add("active");
-      renderProducts(document.getElementById("searchInput")?.value || "");
-    });
-    wrap.appendChild(b);
-  });
-}
-
-// ===== Login com Discord (Netlify Functions) =====
-const btnLogin = document.getElementById("btnLogin");
-const userBox = document.getElementById("userBox");
-const btnLogout = document.getElementById("btnLogout");
-
-if (btnLogin) {
-  btnLogin.addEventListener("click", () => {
-    window.location.href = "/.netlify/functions/discord-auth";
-  });
-}
-
-if (btnLogout) {
-  btnLogout.addEventListener("click", async () => {
-    await fetch("/.netlify/functions/logout");
-    window.location.reload();
-  });
-}
-
-// Atualiza UI com base no cookie de sessão (discord_user)
-async function refreshDiscordUserUI() {
-  try {
-    const res = await fetch("/.netlify/functions/me", { cache: "no-store" });
-    const data = await res.json();
-
-    if (!data.logged) {
-      window.__AUTH_LOGGED__ = false;
-      window.__AUTH_LOGGED__ = true;
-    if (window.location.search.includes("code=") || window.location.search.includes("state=")) {
-      try { history.replaceState({}, "", window.location.pathname + window.location.hash); } catch {}
-    }
-    if (btnLogin) btnLogin.style.display = "inline-flex";
-if (userBox) userBox.style.display = "none";
-      return;
-    }
-
-    if (btnLogin) btnLogin.style.display = "none";
-    if (userBox) userBox.style.display = "flex";
-
-    const usernameEl = document.getElementById("username");
-    const avatarEl = document.getElementById("avatar");
-
-    if (usernameEl) usernameEl.textContent = data.user.username;
-
-    if (avatarEl) {
-      avatarEl.src = `https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png`;
-      avatarEl.onerror = () => {
-        // fallback caso não tenha avatar custom
-        avatarEl.src = "https://cdn.discordapp.com/embed/avatars/0.png";
-      };
-    }
-  } catch (e) {
-    // Se as functions não estiverem deployadas ainda, só não quebra o site.
-    if (btnLogin) btnLogin.style.display = "inline-flex";
-    if (userBox) userBox.style.display = "none";
-  }
-}
-
-refreshDiscordUserUI();
