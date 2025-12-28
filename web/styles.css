@@ -1,3 +1,6 @@
+/* Patch v2 — evita sobreposição/overlap do login com carrinho */
+
+/* Garanta que o container do topo seja flex e tenha espaço */
 .topbar,
 .header,
 .site-header {
