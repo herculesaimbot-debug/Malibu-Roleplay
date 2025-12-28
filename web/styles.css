@@ -345,3 +345,14 @@ body{
   background: #5865F2;
   box-shadow: 0 0 12px rgba(88,101,242,.65);
 }
+
+/* ===== Auth UI: manter botões estáveis no topo ===== */
+.topbar{ position: sticky; } /* já existe, mantém referência de posicionamento */
+.userbox{
+  position: absolute;
+  right: 16px;
+  top: 10px;
+  z-index: 20;
+}
+/* mantém o botão de login no fluxo normal */
+#btnLogin{ display: inline-flex; }
