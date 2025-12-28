@@ -30,16 +30,14 @@ function verifySessionCookie(value, secret) {
   const [payloadB64, sig] = parts;
   const expectedSig = sign(payloadB64, secret);
 
-  // timing-safe compare
   const a = Buffer.from(sig);
   const b = Buffer.from(expectedSig);
   if (a.length !== b.length) return null;
   if (!crypto.timingSafeEqual(a, b)) return null;
 
-  const payloadStr = b64urlDecodeToString(payloadB64);
   let payload;
   try {
-    payload = JSON.parse(payloadStr);
+    payload = JSON.parse(b64urlDecodeToString(payloadB64));
   } catch {
     return null;
   }
