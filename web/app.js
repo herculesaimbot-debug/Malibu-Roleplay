@@ -1,89 +1,108 @@
-// ===== Malibu Roleplay Config =====
 const DISCORD_INVITE_URL = ""; // ex: "https://discord.gg/SEULINK"
-const CONNECT_CMD = ""; // quando tiver IP: "connect SEU_IP_AQUI:30120"
+const CONNECT_CMD = "";        // ex: "connect SEU_IP_AQUI:30120"
 
-const pages = ["home","store","rules","team","checkout"];
+const pages = ["home", "store", "rules", "team", "checkout"];
 
+// Categorias
 const categories = ["VIPs", "Dinheiro", "Leveis", "Organizações", "Unban"];
 let activeCategory = "VIPs";
 
+// ===== Produtos =====
+// Obs: IDs devem ser ÚNICOS. Eu ajustei os repetidos do seu arquivo original.
 const productsData = [
-  // ===== VIPs =====
-  { id:"vip_bronze", category:"VIPs", name:"VIP Bronze(30 dias)", price: 23.99, tag:"VIP", desc:"Prioridade + bônus de salário + perks exclusivos." , img:"./assets/products/bronze.webp"},
-  { id:"vip_prata", category:"VIPs", name:"VIP Prata (30 dias)", price: 28.99, tag:"VIP", desc:"Prioridade alta + benefícios premium + fila turbo." , img:"./assets/products/prata.webp"},
-  { id:"vip_ouro", category:"VIPs", name:"VIP Ouro (30 dias)", price: 33.99, tag:"VIP", desc:"Prioridade alta + benefícios premium + fila turbo." , img:"./assets/products/ouro.webp"},
-  { id:"vip_platina", category:"VIPs", name:"VIP Platina (30 dias)", price: 38.99, tag:"VIP", desc:"Prioridade alta + benefícios premium + fila turbo." , img:"./assets/products/platina.webp"},
-  { id:"vip_diamante", category:"VIPs", name:"VIP Diamante (30 dias)", price: 48.99, tag:"VIP", desc:"Prioridade alta + benefícios premium + fila turbo." , img:"./assets/products/diamante.webp"},
+  // VIPs
+  { id:"vip_bronze",  category:"VIPs", name:"VIP Bronze (30 dias)",  price: 23.99, tag:"VIP",   desc:"Prioridade + bônus de salário + perks exclusivos.", img:"./assets/products/bronze.webp"},
+  { id:"vip_prata",   category:"VIPs", name:"VIP Prata (30 dias)",   price: 28.99, tag:"VIP",   desc:"Prioridade alta + benefícios premium + fila turbo.", img:"./assets/products/prata.webp"},
+  { id:"vip_ouro",    category:"VIPs", name:"VIP Ouro (30 dias)",    price: 33.99, tag:"VIP",   desc:"Prioridade alta + benefícios premium + fila turbo.", img:"./assets/products/ouro.webp"},
+  { id:"vip_platina", category:"VIPs", name:"VIP Platina (30 dias)", price: 38.99, tag:"VIP",   desc:"Prioridade alta + benefícios premium + fila turbo.", img:"./assets/products/platina.webp"},
+  { id:"vip_diamante",category:"VIPs", name:"VIP Diamante (30 dias)",price: 48.99, tag:"VIP",   desc:"Prioridade alta + benefícios premium + fila turbo.", img:"./assets/products/diamante.webp"},
 
-  // ===== Dinheiro / Créditos =====
-  { id:"coins_50k", category:"Dinheiro", name:"1.000.000", price: 20.00, tag:"Money", desc:"Torne-se um milonario." , img:"./assets/products/1kk.webp"},
-  { id:"coins_150k", category:"Dinheiro", name:"2.000.000", price: 35.00, tag:"Money", desc:"Torne-se um milonario." , img:"./assets/products/2kk.webp"},
-  { id:"coins_150k", category:"Dinheiro", name:"3.000.000", price: 50.00, tag:"Money", desc:"Torne-se um milonario." , img:"./assets/products/3kk.webp"},
-  { id:"coins_150k", category:"Dinheiro", name:"10.000.000", price: 75.00, tag:"Money", desc:"Torne-se um multi-milonario." , img:"./assets/products/10kk.webp"},
+  // Dinheiro (IDs corrigidos)
+  { id:"coins_1m",   category:"Dinheiro", name:"1.000.000",  price: 20.00, tag:"Money", desc:"Torne-se um milionário.",        img:"./assets/products/1kk.webp"},
+  { id:"coins_2m",   category:"Dinheiro", name:"2.000.000",  price: 35.00, tag:"Money", desc:"Torne-se um milionário.",        img:"./assets/products/2kk.webp"},
+  { id:"coins_3m",   category:"Dinheiro", name:"3.000.000",  price: 50.00, tag:"Money", desc:"Torne-se um milionário.",        img:"./assets/products/3kk.webp"},
+  { id:"coins_10m",  category:"Dinheiro", name:"10.000.000", price: 75.00, tag:"Money", desc:"Torne-se um multi-milionário.",  img:"./assets/products/10kk.webp"},
 
-  // ===== Leveis =====
- 
-  { id:"level_pro", category:"Leveis", name:"Level 50", price: 30.00, tag:"Level", desc:"Após a compra, abra um ticket." , img:"./assets/products/50.webp"},
-  { id:"level_pro", category:"Leveis", name:"Level 100", price: 43.00, tag:"Level", desc:"Após a compra, abra um ticket." , img:"./assets/products/100.webp"},
-  { id:"level_pro", category:"Leveis", name:"Level 150", price: 60.00, tag:"Level", desc:"Após a compra, abra um ticket." , img:"./assets/products/150.webp"},
-  { id:"level_pro", category:"Leveis", name:"Level 200", price: 75.00, tag:"Level", desc:"Após a compra, abra um ticket." , img:"./assets/products/200.webp"},
+  // Leveis (IDs corrigidos)
+  { id:"level_50",  category:"Leveis", name:"Level 50",  price: 30.00, tag:"Level", desc:"Após a compra, abra um ticket.", img:"./assets/products/50.webp"},
+  { id:"level_100", category:"Leveis", name:"Level 100", price: 43.00, tag:"Level", desc:"Após a compra, abra um ticket.", img:"./assets/products/100.webp"},
+  { id:"level_150", category:"Leveis", name:"Level 150", price: 60.00, tag:"Level", desc:"Após a compra, abra um ticket.", img:"./assets/products/150.webp"},
+  { id:"level_200", category:"Leveis", name:"Level 200", price: 75.00, tag:"Level", desc:"Após a compra, abra um ticket.", img:"./assets/products/200.webp"},
 
-  // ===== Organizações =====
-  { id:"org_create", category:"Organizações", name:"Organização policial", price: 35.90, tag:"Org", desc:"Entrega Manual." , img:"./assets/products/cop.webp"},
-  { id:"org_upgrade", category:"Organizações", name:"Organização criminosa", price: 35.90, tag:"Org", desc:"Entrega Manual." , img:"./assets/products/fac.webp"},
-  { id:"org_upgrade", category:"Organizações", name:"Organização medico", price: 35.90, tag:"Org", desc:"Entrega Manual." , img:"./assets/products/med.webp"},
-  { id:"org_upgrade", category:"Organizações", name:"Organização mecanico", price: 45.90, tag:"Org", desc:"Entrega manual." , img:"./assets/products/mec.webp"},
+  // Organizações (IDs corrigidos)
+  { id:"org_police",   category:"Organizações", name:"Organização policial",   price: 35.90, tag:"Org", desc:"Entrega manual.", img:"./assets/products/cop.webp"},
+  { id:"org_crime",    category:"Organizações", name:"Organização criminosa",  price: 35.90, tag:"Org", desc:"Entrega manual.", img:"./assets/products/fac.webp"},
+  { id:"org_medic",    category:"Organizações", name:"Organização médico",     price: 35.90, tag:"Org", desc:"Entrega manual.", img:"./assets/products/med.webp"},
+  { id:"org_mechanic", category:"Organizações", name:"Organização mecânico",   price: 45.90, tag:"Org", desc:"Entrega manual.", img:"./assets/products/mec.webp"},
 
-  // ===== Unban =====
-  { id:"unban", category:"Unban", name:"Desban Serial", price: 100.00, tag:"Serviço", desc:"1 UN.", img:"./assets/products/serial.webp" },
-  { id:"unban", category:"Unban", name:"Desban Conta", price: 50.00, tag:"Serviço", desc:"1 UN.", img:"./assets/products/conta.webp" },
-  { id:"unban", category:"Unban", name:"Desban Discord", price: 14.99, tag:"Serviço", desc:"1 UN.", img:"./assets/products/discord.webp" },
+  // Unban (IDs corrigidos)
+  { id:"unban_serial",  category:"Unban", name:"Desban Serial",  price: 100.00, tag:"Serviço", desc:"1 UN.", img:"./assets/products/serial.webp" },
+  { id:"unban_account", category:"Unban", name:"Desban Conta",   price: 50.00,  tag:"Serviço", desc:"1 UN.", img:"./assets/products/conta.webp" },
+  { id:"unban_discord", category:"Unban", name:"Desban Discord", price: 14.99,  tag:"Serviço", desc:"1 UN.", img:"./assets/products/discord.webp" },
 ];
 
-
+// Equipe
 const teamData = [
   { name:"AQUILES", role:"Fundador • Malibu Roleplay", bio:"Direção do projeto, decisões finais e visão do RP.", links:[["Discord","#"],["Instagram","#"]] },
-  { name:"AnNy", role:"Fundadora • Malibu Roleplay", bio:"Administração geral, organização e padronização das regras e experiência do RP.", links:[["Discord","#"],["Instagram","#"]] },
-  { name:"VT", role:"Programador • Malibu Roleplay", bio:"Desenvolvimento de scripts, estabilidade, otimização e segurança do servidor.", links:[["Discord","#"],["Instagram","#"]] },
+  { name:"AnNy",    role:"Fundadora • Malibu Roleplay", bio:"Administração geral, organização e padronização das regras e experiência do RP.", links:[["Discord","#"],["Instagram","#"]] },
+  { name:"VT",      role:"Programador • Malibu Roleplay", bio:"Desenvolvimento de scripts, estabilidade, otimização e segurança do servidor.", links:[["Discord","#"],["Instagram","#"]] },
 ];
 
+// ===== Estado =====
 const cart = new Map();
-const fmtBRL = (v) => v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const fmtBRL = (v) => Number(v || 0).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
 
+// ===== Helpers DOM =====
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const byId = (id) => document.getElementById(id);
+
+function on(el, ev, fn, opts){
+  if (!el) return;
+  el.addEventListener(ev, fn, opts);
+}
+
+function safeText(el, text){
+  if (!el) return;
+  el.textContent = text;
+}
+
+function safeShow(el, show, displayStyle="block"){
+  if (!el) return;
+  el.style.display = show ? displayStyle : "none";
+}
+
+// ===== Navegação =====
 function setPage(page){
-  pages.forEach(p=>{
-    document.getElementById(`page-${p}`).classList.toggle("show", p===page);
-  });
-
-  document.querySelectorAll(".nav-btn").forEach(b=>{
-    b.classList.toggle("active", b.dataset.page===page);
-  });
-
-  // salva a aba atual na URL
+  pages.forEach(p => byId(`page-${p}`)?.classList.toggle("show", p === page));
+  $$(".nav-btn").forEach(b => b.classList.toggle("active", b.dataset.page === page));
   window.location.hash = page;
-
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 
+// ===== Carrinho =====
 function cartCount(){
   let n = 0;
   for (const qty of cart.values()) n += qty;
   return n;
 }
+
 function cartTotal(){
   let total = 0;
   for (const [id, qty] of cart.entries()){
-    const p = productsData.find(x=>x.id===id);
+    const p = productsData.find(x => x.id === id);
     total += (p?.price || 0) * qty;
   }
   return total;
 }
 
 function renderCart(){
-  document.getElementById("cartCount").textContent = cartCount();
-  const box = document.getElementById("cartItems");
-  const totalEl = document.getElementById("cartTotal");
-  totalEl.textContent = fmtBRL(cartTotal());
+  safeText(byId("cartCount"), String(cartCount()));
+
+  const box = byId("cartItems");
+  const totalEl = byId("cartTotal");
+  if (totalEl) totalEl.textContent = fmtBRL(cartTotal());
+  if (!box) return;
 
   if (cartCount() === 0){
     box.innerHTML = `<div class="muted">Seu carrinho está vazio. Vá na Loja e adicione produtos.</div>`;
@@ -92,7 +111,9 @@ function renderCart(){
 
   box.innerHTML = "";
   for (const [id, qty] of cart.entries()){
-    const p = productsData.find(x=>x.id===id);
+    const p = productsData.find(x => x.id === id);
+    if (!p) continue;
+
     const row = document.createElement("div");
     row.className = "cart-item";
     row.innerHTML = `
@@ -101,32 +122,38 @@ function renderCart(){
         <div class="sub">${qty} × ${fmtBRL(p.price)} • <span class="muted">${p.tag}</span></div>
       </div>
       <div class="actions">
-        <button data-act="dec" data-id="${id}">-</button>
+        <button data-act="dec" data-id="${id}" type="button">-</button>
         <strong>${qty}</strong>
-        <button data-act="inc" data-id="${id}">+</button>
-        <button data-act="del" data-id="${id}">Remover</button>
+        <button data-act="inc" data-id="${id}" type="button">+</button>
+        <button data-act="del" data-id="${id}" type="button">Remover</button>
       </div>
     `;
     box.appendChild(row);
   }
 
-  box.querySelectorAll("button").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
+  $$("button[data-act]", box).forEach(btn=>{
+    on(btn, "click", ()=>{
       const id = btn.dataset.id;
       const act = btn.dataset.act;
-      if (act==="inc") cart.set(id, (cart.get(id)||0)+1);
-      if (act==="dec") cart.set(id, Math.max(1, (cart.get(id)||1)-1));
-      if (act==="del") cart.delete(id);
+      if (!id || !act) return;
+
+      if (act === "inc") cart.set(id, (cart.get(id)||0) + 1);
+      if (act === "dec") cart.set(id, Math.max(1, (cart.get(id)||1) - 1));
+      if (act === "del") cart.delete(id);
+
       renderCart();
-      renderProducts(document.getElementById("searchInput")?.value || "");
+      renderProducts(byId("searchInput")?.value || "");
     });
   });
 }
 
+// ===== Produtos =====
 function renderProducts(filter=""){
-  const wrap = document.getElementById("products");
+  const wrap = byId("products");
+  if (!wrap) return;
+
   wrap.innerHTML = "";
-  const q = filter.trim().toLowerCase();
+  const q = (filter || "").trim().toLowerCase();
 
   const items = productsData.filter(p => {
     const inCat = (activeCategory === "Todos") || (p.category === activeCategory);
@@ -155,27 +182,29 @@ function renderProducts(filter=""){
           <div class="muted small">Entrega manual pela staff</div>
         </div>
         <div class="qty">
-          <button data-act="dec">-</button>
+          <button data-act="dec" type="button">-</button>
           <span>${qty}</span>
-          <button data-act="inc">+</button>
+          <button data-act="inc" type="button">+</button>
         </div>
       </div>
     `;
 
-    const buttons = el.querySelectorAll("button");
-    const bDec = buttons[0];
-    const bInc = buttons[1];
+    const bDec = $("button[data-act='dec']", el);
+    const bInc = $("button[data-act='inc']", el);
 
-    bDec.addEventListener("click", ()=>{
+    on(bDec, "click", ()=>{
       if (!cart.has(p.id)) return;
       const n = cart.get(p.id);
-      if (n<=1) cart.delete(p.id); else cart.set(p.id, n-1);
-      renderProducts(document.getElementById("searchInput").value);
+      if (n <= 1) cart.delete(p.id);
+      else cart.set(p.id, n - 1);
+
+      renderProducts(byId("searchInput")?.value || "");
       renderCart();
     });
-    bInc.addEventListener("click", ()=>{
-      cart.set(p.id, (cart.get(p.id)||0)+1);
-      renderProducts(document.getElementById("searchInput").value);
+
+    on(bInc, "click", ()=>{
+      cart.set(p.id, (cart.get(p.id)||0) + 1);
+      renderProducts(byId("searchInput")?.value || "");
       renderCart();
     });
 
@@ -183,10 +212,36 @@ function renderProducts(filter=""){
   });
 }
 
-function renderTeam(){
-  const wrap = document.getElementById("teamCards");
+// ===== Categorias =====
+function renderCategoryTabs(){
+  const wrap = byId("categoryTabs");
+  if (!wrap) return;
+
   wrap.innerHTML = "";
-  teamData.forEach((m)=>{
+  categories.forEach(cat=>{
+    const b = document.createElement("button");
+    b.className = "tab" + (cat === activeCategory ? " active" : "");
+    b.type = "button";
+    b.textContent = cat;
+
+    on(b, "click", ()=>{
+      activeCategory = cat;
+      $$(".tab", wrap).forEach(t => t.classList.remove("active"));
+      b.classList.add("active");
+      renderProducts(byId("searchInput")?.value || "");
+    });
+
+    wrap.appendChild(b);
+  });
+}
+
+// ===== Equipe =====
+function renderTeam(){
+  const wrap = byId("teamCards");
+  if (!wrap) return;
+
+  wrap.innerHTML = "";
+  teamData.forEach(m=>{
     const el = document.createElement("div");
     el.className = "member";
     el.innerHTML = `
@@ -202,31 +257,37 @@ function renderTeam(){
   });
 }
 
+// ===== Toast =====
 function toast(msg){
-  const t = document.getElementById("toast");
+  const t = byId("toast");
+  if (!t) return;
   t.textContent = msg;
   t.classList.add("show");
   setTimeout(()=>t.classList.remove("show"), 3400);
 }
 
+// ===== Pagamento (Mercado Pago) =====
 async function payNow(){
-  if (cartCount()===0) return toast("Carrinho vazio. Adicione itens na Loja.");
-  const name = document.getElementById("buyerName").value.trim();
-  const email = document.getElementById("buyerEmail").value.trim();
+  if (cartCount() === 0) return toast("Carrinho vazio. Adicione itens na Loja.");
+
+  const name = (byId("buyerName")?.value || "").trim();
+  const email = (byId("buyerEmail")?.value || "").trim();
   if (!name || !email) return toast("Preencha nome e e-mail.");
 
   const items = [];
   for (const [id, qty] of cart.entries()){
-    const p = productsData.find(x=>x.id===id);
+    const p = productsData.find(x => x.id === id);
+    if (!p) continue;
     items.push({ id, title:p.name, unit_price:p.price, quantity:qty });
   }
 
   try{
-    const res = await fetch(`/.netlify/functions/mp_create_preference`,{
+    const res = await fetch("/.netlify/functions/mp_create_preference",{
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({ buyer:{name,email}, items })
     });
+
     const data = await res.json();
     if (!res.ok) throw new Error(data?.error || "Falha no Mercado Pago");
     window.location.href = data.init_point;
@@ -235,152 +296,151 @@ async function payNow(){
   }
 }
 
-// Discord modal
+// ===== Modal Discord (convite) =====
 function openDiscordModal(){
-  const modal = document.getElementById("discordModal");
+  const modal = byId("discordModal");
+  if (!modal) return;
   modal.classList.add("show");
   modal.setAttribute("aria-hidden", "false");
-  const inviteText = document.getElementById("discordInviteText");
-  inviteText.textContent = DISCORD_INVITE_URL ? DISCORD_INVITE_URL : "Ainda não definido";
+  safeText(byId("discordInviteText"), DISCORD_INVITE_URL ? DISCORD_INVITE_URL : "Ainda não definido");
 }
+
 function closeDiscordModal(){
-  const modal = document.getElementById("discordModal");
+  const modal = byId("discordModal");
+  if (!modal) return;
   modal.classList.remove("show");
   modal.setAttribute("aria-hidden", "true");
 }
 
-// Init
-document.getElementById("year").textContent = new Date().getFullYear();
-
-document.querySelectorAll(".nav-btn").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    const page = btn.dataset.page;
-    if (page){
-      setPage(page);
-      renderCart();
-    }
-  });
-});
-
-document.getElementById("btnGoStore").addEventListener("click",(e)=>{e.preventDefault(); setPage("store");});
-document.getElementById("btnGoStore2").addEventListener("click",(e)=>{e.preventDefault(); setPage("store");});
-
-document.getElementById("btnCopyIP").addEventListener("click",(e)=>{
-  e.preventDefault();
-  if (!CONNECT_CMD){
-    toast("IP ainda não definido. Assim que tiver, eu coloco o connect aqui.");
-    return;
-  }
-  navigator.clipboard.writeText(CONNECT_CMD);
-  toast(`Connect copiado: ${CONNECT_CMD}`);
-});
-
-document.getElementById("btnClearCart").addEventListener("click", ()=>{
-  cart.clear();
-  renderProducts(document.getElementById("searchInput").value);
-  renderCart();
-});
-
-document.getElementById("btnPay").addEventListener("click", payNow);
-document.getElementById("searchInput").addEventListener("input",(e)=> renderProducts(e.target.value));
-
-renderCategoryTabs();
-renderProducts("");
-renderTeam();
-renderCart();
-
-// Banner buttons
-const btnBannerStore = document.getElementById("btnBannerStore");
-if (btnBannerStore) btnBannerStore.addEventListener("click", ()=> setPage("store"));
-const btnBannerDiscord = document.getElementById("btnBannerDiscord");
-if (btnBannerDiscord) btnBannerDiscord.addEventListener("click", openDiscordModal);
-
-// Discord open/close
-document.getElementById("btnDiscord").addEventListener("click", openDiscordModal);
-document.getElementById("btnDiscordFloat").addEventListener("click", openDiscordModal);
-document.getElementById("discordClose").addEventListener("click", closeDiscordModal);
-document.getElementById("discordModal").addEventListener("click", (e)=>{ if (e.target?.dataset?.close) closeDiscordModal(); });
-
-document.getElementById("btnCopyDiscord").addEventListener("click", async ()=>{
-  if (!DISCORD_INVITE_URL) return toast("Discord ainda não definido. Me envie o link do convite.");
-  await navigator.clipboard.writeText(DISCORD_INVITE_URL);
-  toast("Convite do Discord copiado!");
-});
-document.getElementById("btnOpenDiscord").addEventListener("click", ()=>{
-  if (!DISCORD_INVITE_URL) return toast("Discord ainda não definido. Me envie o link do convite.");
-  window.open(DISCORD_INVITE_URL, "_blank");
-});
-
-
-function renderCategoryTabs(){
-  const wrap = document.getElementById("categoryTabs");
-  if (!wrap) return;
-  wrap.innerHTML = "";
-  categories.forEach(cat=>{
-    const b = document.createElement("button");
-    b.className = "tab" + (cat === activeCategory ? " active" : "");
-    b.type = "button";
-    b.textContent = cat;
-    b.addEventListener("click", ()=>{
-      activeCategory = cat;
-      wrap.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-      b.classList.add("active");
-      renderProducts(document.getElementById("searchInput")?.value || "");
-    });
-    wrap.appendChild(b);
-  });
-}
-
 // ===== Login com Discord (Netlify Functions) =====
-const btnLogin = document.getElementById("btnLogin");
-const userBox = document.getElementById("userBox");
-const btnLogout = document.getElementById("btnLogout");
+const auth = {
+  btnLogin: null,
+  userBox: null,
+  btnLogout: null,
+};
 
-if (btnLogin) {
-  btnLogin.addEventListener("click", () => {
+function bindDiscordAuthUI(){
+  auth.btnLogin = byId("btnLogin");
+  auth.userBox = byId("userBox");
+  auth.btnLogout = byId("btnLogout");
+
+  on(auth.btnLogin, "click", () => {
     window.location.href = "/.netlify/functions/discord-auth";
   });
-}
 
-if (btnLogout) {
-  btnLogout.addEventListener("click", async () => {
+  on(auth.btnLogout, "click", async () => {
     await fetch("/.netlify/functions/logout");
     window.location.reload();
   });
 }
 
-// Atualiza UI com base no cookie de sessão (discord_user)
-async function refreshDiscordUserUI() {
+async function refreshDiscordUserUI(){
   try {
     const res = await fetch("/.netlify/functions/me", { cache: "no-store" });
     const data = await res.json();
 
-    if (!data.logged) {
-      if (btnLogin) btnLogin.style.display = "inline-flex";
-      if (userBox) userBox.style.display = "none";
+    if (!data?.logged) {
+      safeShow(auth.btnLogin, true, "inline-flex");
+      safeShow(auth.userBox, false);
       return;
     }
 
-    if (btnLogin) btnLogin.style.display = "none";
-    if (userBox) userBox.style.display = "flex";
+    safeShow(auth.btnLogin, false);
+    safeShow(auth.userBox, true, "flex");
 
-    const usernameEl = document.getElementById("username");
-    const avatarEl = document.getElementById("avatar");
+    safeText(byId("username"), data.user?.username || "Usuário");
 
-    if (usernameEl) usernameEl.textContent = data.user.username;
-
+    const avatarEl = byId("avatar");
     if (avatarEl) {
-      avatarEl.src = `https://cdn.discordapp.com/avatars/${data.user.id}/${data.user.avatar}.png`;
-      avatarEl.onerror = () => {
-        // fallback caso não tenha avatar custom
-        avatarEl.src = "https://cdn.discordapp.com/embed/avatars/0.png";
-      };
+      const id = data.user?.id;
+      const av = data.user?.avatar;
+      avatarEl.src = (id && av)
+        ? `https://cdn.discordapp.com/avatars/${id}/${av}.png`
+        : "https://cdn.discordapp.com/embed/avatars/0.png";
+
+      avatarEl.onerror = () => { avatarEl.src = "https://cdn.discordapp.com/embed/avatars/0.png"; };
     }
-  } catch (e) {
-    // Se as functions não estiverem deployadas ainda, só não quebra o site.
-    if (btnLogin) btnLogin.style.display = "inline-flex";
-    if (userBox) userBox.style.display = "none";
+  } catch {
+    safeShow(auth.btnLogin, true, "inline-flex");
+    safeShow(auth.userBox, false);
   }
 }
 
-refreshDiscordUserUI();
+// ===== Boot =====
+function bindGlobalUI(){
+  safeText(byId("year"), String(new Date().getFullYear()));
+
+  $$(".nav-btn").forEach(btn=>{
+    on(btn, "click", ()=>{
+      const page = btn.dataset.page;
+      if (!page) return;
+      setPage(page);
+      renderCart();
+    });
+  });
+
+  on(byId("btnGoStore"), "click", (e)=>{ e.preventDefault(); setPage("store"); });
+  on(byId("btnGoStore2"), "click", (e)=>{ e.preventDefault(); setPage("store"); });
+
+  on(byId("btnCopyIP"), "click", async (e)=>{
+    e.preventDefault();
+    if (!CONNECT_CMD) return toast("IP ainda não definido. Assim que tiver, eu coloco o connect aqui.");
+    try{
+      await navigator.clipboard.writeText(CONNECT_CMD);
+      toast(`Connect copiado: ${CONNECT_CMD}`);
+    }catch{
+      toast("Não foi possível copiar. Copie manualmente.");
+    }
+  });
+
+  on(byId("btnClearCart"), "click", ()=>{
+    cart.clear();
+    renderProducts(byId("searchInput")?.value || "");
+    renderCart();
+  });
+
+  on(byId("btnPay"), "click", payNow);
+  on(byId("searchInput"), "input", (e)=> renderProducts(e.target.value));
+
+  on(byId("btnBannerStore"), "click", ()=> setPage("store"));
+  on(byId("btnBannerDiscord"), "click", openDiscordModal);
+
+  // Modal Discord (todos com guard)
+  on(byId("btnDiscord"), "click", openDiscordModal);
+  on(byId("btnDiscordFloat"), "click", openDiscordModal);
+  on(byId("discordClose"), "click", closeDiscordModal);
+
+  const modal = byId("discordModal");
+  if (modal) on(modal, "click", (e)=>{ if (e.target?.dataset?.close) closeDiscordModal(); });
+
+  on(byId("btnCopyDiscord"), "click", async ()=>{
+    if (!DISCORD_INVITE_URL) return toast("Discord ainda não definido. Me envie o link do convite.");
+    try{
+      await navigator.clipboard.writeText(DISCORD_INVITE_URL);
+      toast("Convite do Discord copiado!");
+    }catch{
+      toast("Não foi possível copiar o convite.");
+    }
+  });
+
+  on(byId("btnOpenDiscord"), "click", ()=>{
+    if (!DISCORD_INVITE_URL) return toast("Discord ainda não definido. Me envie o link do convite.");
+    window.open(DISCORD_INVITE_URL, "_blank", "noopener");
+  });
+}
+
+function boot(){
+  bindGlobalUI();
+  renderCategoryTabs();
+  renderProducts("");
+  renderTeam();
+  renderCart();
+
+  bindDiscordAuthUI();
+  refreshDiscordUserUI();
+
+  const hashPage = (window.location.hash || "").replace("#", "");
+  if (hashPage && pages.includes(hashPage)) setPage(hashPage);
+}
+
+document.addEventListener("DOMContentLoaded", boot);
