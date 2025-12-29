@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="pt-br">
 <head>
@@ -22,11 +21,7 @@
       </div>
     </div>
 
-    <button class="hamburger" id="navToggle" type="button" aria-label="Abrir menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-
-    <nav class="nav" id="mainNav">
+    <nav class="nav">
       <button class="nav-btn active" data-page="home">Página Inicial</button>
       <button class="nav-btn" data-page="store">Loja</button>
       <button class="nav-btn" data-page="rules">Regras</button>
@@ -37,23 +32,17 @@
       <button class="nav-btn" id="btnLogin">Login com Discord</button>
 
       <div id="userBox" class="userbox" style="display:none">
-        <button id="userMenuBtn" class="userbox-trigger" type="button" aria-label="Abrir menu do usuário" aria-haspopup="menu" aria-expanded="false">
-          <img id="avatar" class="userbox-avatar" alt="Avatar do Discord" />
-        </button>
-
-        <div id="userMenu" class="userbox-menu" role="menu" aria-hidden="true">
-          <div class="userbox-meta">
-            <div class="userbox-row">
-              <span id="username" class="userbox-name"></span>
-              <span id="badgeDiscord" class="discord-badge">Logado com Discord</span>
-            </div>
-            <button class="btn ghost" id="btnLogout" type="button">Sair</button>
+        <img id="avatar" class="userbox-avatar" alt="Avatar do Discord" />
+        <div class="userbox-meta">
+          <div class="userbox-row">
+            <span id="username" class="userbox-name"></span>
+            <span id="badgeDiscord" class="discord-badge">Logado com Discord</span>
           </div>
+          <button class="btn ghost" id="btnLogout" type="button">Sair</button>
         </div>
       </div>
-</nav>
+    </nav>
   </header>
-  <div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
 
   <main class="container">
     <section class="page show" id="page-home">
@@ -533,100 +522,57 @@
   })();
 </script>
 
-
 <script>
-  (function () {
-    var toggle = document.getElementById('navToggle');
-    var nav = document.getElementById('mainNav') || document.querySelector('.nav');
-    var overlay = document.getElementById('navOverlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'navOverlay';
-      overlay.className = 'nav-overlay';
-      overlay.setAttribute('aria-hidden','true');
-      document.body.appendChild(overlay);
+  // Menu do usuário (avatar): abre/fecha ao clicar.
+  // Usamos delegação (document) porque o app.js pode recriar o userBox após o login.
+  (function(){
+    function getEls(){
+      return {
+        userBox: document.getElementById('userBox'),
+        btn: document.getElementById('userMenuBtn'),
+        menu: document.getElementById('userMenu')
+      };
     }
-    if (!toggle || !nav) return;
-
-    function setOpen(open) {
-      nav.classList.toggle('open', open);
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      overlay.classList.toggle('show', open);
-      overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
-      document.body.classList.toggle('menu-open', open);
+    function setOpen(open){
+      var els = getEls();
+      if(!els.userBox || !els.btn || !els.menu) return;
+      els.userBox.classList.toggle('open', open);
+      els.btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      els.menu.setAttribute('aria-hidden', open ? 'false' : 'true');
     }
-    function isOpen() { return nav.classList.contains('open'); }
-
-    toggle.addEventListener('click', function (e) {
-      e.stopPropagation();
-      setOpen(!isOpen());
-    });
-
-    // fecha ao clicar no fundo escurecido
-    overlay.addEventListener('click', function () { setOpen(false); });
-
-    // fecha ao clicar em um item do menu (mobile)
-    nav.addEventListener('click', function (e) {
-      var btn = e.target.closest && e.target.closest('.nav-btn');
-      if (btn) setOpen(false);
-    });
-
-    // fecha ao clicar fora
-    document.addEventListener('click', function (e) {
-      if (!isOpen()) return;
-      if (e.target.closest && (e.target.closest('#mainNav') || e.target.closest('#navToggle'))) return;
-      setOpen(false);
-    });
-
-    // se voltar pra desktop, garante que não fica preso em "open"
-    window.addEventListener('resize', function () {
-      if (window.innerWidth > 720) setOpen(false);
-    });
-  })();
-</script>
-
-
-
-<script>
-  (function () {
-    var userBox = document.getElementById('userBox');
-    var btn = document.getElementById('userMenuBtn');
-    var menu = document.getElementById('userMenu');
-    if (!userBox || !btn || !menu) return;
-
-    function closeMenu() {
-      userBox.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-      menu.setAttribute('aria-hidden', 'true');
-    }
-    function openMenu() {
-      userBox.classList.add('open');
-      btn.setAttribute('aria-expanded', 'true');
-      menu.setAttribute('aria-hidden', 'false');
+    function isOpen(){
+      var els = getEls();
+      return !!(els.userBox && els.userBox.classList.contains('open'));
     }
 
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      var isOpen = userBox.classList.contains('open');
-      if (isOpen) closeMenu();
-      else openMenu();
+    // clique no avatar
+    document.addEventListener('click', function(e){
+      var t = e.target;
+      if(!t || !t.closest) return;
+      var btn = t.closest('#userMenuBtn');
+      if(btn){
+        e.preventDefault();
+        e.stopPropagation();
+        setOpen(!isOpen());
+        return;
+      }
+      // clique fora fecha
+      if(isOpen() && !t.closest('#userBox')) setOpen(false);
     });
 
-    // fecha ao clicar fora
-    document.addEventListener('click', function (e) {
-      if (!userBox.classList.contains('open')) return;
-      if (e.target.closest && e.target.closest('#userBox')) return;
-      closeMenu();
+    // fecha com ESC
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') setOpen(false);
     });
 
-    // fecha no ESC
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closeMenu();
-    });
-
-    // se clicar no overlay do menu mobile, fecha também
-    var overlay = document.getElementById('navOverlay');
-    if (overlay) overlay.addEventListener('click', closeMenu);
+    // ao clicar em qualquer item do menu principal, fecha o dropdown
+    var nav = document.getElementById('mainNav');
+    if(nav){
+      nav.addEventListener('click', function(ev){
+        var btnNav = ev.target.closest && ev.target.closest('.nav-btn');
+        if(btnNav) setOpen(false);
+      });
+    }
   })();
 </script>
 
