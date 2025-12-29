@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="pt-br">
 <head>
@@ -36,16 +37,21 @@
       <button class="nav-btn" id="btnLogin">Login com Discord</button>
 
       <div id="userBox" class="userbox" style="display:none">
-        <img id="avatar" class="userbox-avatar" alt="Avatar do Discord" />
-        <div class="userbox-meta">
-          <div class="userbox-row">
-            <span id="username" class="userbox-name"></span>
-            <span id="badgeDiscord" class="discord-badge">Logado com Discord</span>
+        <button id="userMenuBtn" class="userbox-trigger" type="button" aria-label="Abrir menu do usuário" aria-haspopup="menu" aria-expanded="false">
+          <img id="avatar" class="userbox-avatar" alt="Avatar do Discord" />
+        </button>
+
+        <div id="userMenu" class="userbox-menu" role="menu" aria-hidden="true">
+          <div class="userbox-meta">
+            <div class="userbox-row">
+              <span id="username" class="userbox-name"></span>
+              <span id="badgeDiscord" class="discord-badge">Logado com Discord</span>
+            </div>
+            <button class="btn ghost" id="btnLogout" type="button">Sair</button>
           </div>
-          <button class="btn ghost" id="btnLogout" type="button">Sair</button>
         </div>
       </div>
-    </nav>
+</nav>
   </header>
   <div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
 
@@ -556,25 +562,73 @@
       setOpen(!isOpen());
     });
 
+    // fecha ao clicar no fundo escurecido
     overlay.addEventListener('click', function () { setOpen(false); });
 
+    // fecha ao clicar em um item do menu (mobile)
     nav.addEventListener('click', function (e) {
       var btn = e.target.closest && e.target.closest('.nav-btn');
       if (btn) setOpen(false);
     });
 
+    // fecha ao clicar fora
     document.addEventListener('click', function (e) {
       if (!isOpen()) return;
       if (e.target.closest && (e.target.closest('#mainNav') || e.target.closest('#navToggle'))) return;
       setOpen(false);
     });
 
+    // se voltar pra desktop, garante que não fica preso em "open"
     window.addEventListener('resize', function () {
       if (window.innerWidth > 720) setOpen(false);
     });
   })();
 </script>
 
+
+
+<script>
+  (function () {
+    var userBox = document.getElementById('userBox');
+    var btn = document.getElementById('userMenuBtn');
+    var menu = document.getElementById('userMenu');
+    if (!userBox || !btn || !menu) return;
+
+    function closeMenu() {
+      userBox.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      menu.setAttribute('aria-hidden', 'true');
+    }
+    function openMenu() {
+      userBox.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+      menu.setAttribute('aria-hidden', 'false');
+    }
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var isOpen = userBox.classList.contains('open');
+      if (isOpen) closeMenu();
+      else openMenu();
+    });
+
+    // fecha ao clicar fora
+    document.addEventListener('click', function (e) {
+      if (!userBox.classList.contains('open')) return;
+      if (e.target.closest && e.target.closest('#userBox')) return;
+      closeMenu();
+    });
+
+    // fecha no ESC
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeMenu();
+    });
+
+    // se clicar no overlay do menu mobile, fecha também
+    var overlay = document.getElementById('navOverlay');
+    if (overlay) overlay.addEventListener('click', closeMenu);
+  })();
+</script>
 
 </body>
 </html>
