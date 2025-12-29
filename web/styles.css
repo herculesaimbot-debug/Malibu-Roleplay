@@ -377,8 +377,7 @@ body{
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.10);
   backdrop-filter: blur(6px);
-
-  position: relative;}
+}
 .userbox-avatar{
   width: 42px;
   height: 42px;
