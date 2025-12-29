@@ -342,6 +342,8 @@ function bindDiscordAuthUI(){
     await fetch("/.netlify/functions/logout");
     window.location.reload();
   });
+
+  bindUserDropdown();
 }
 
 async function refreshDiscordUserUI(){
@@ -368,12 +370,47 @@ async function refreshDiscordUserUI(){
         ? `https://cdn.discordapp.com/avatars/${id}/${av}.png`
         : "https://cdn.discordapp.com/embed/avatars/0.png";
 
-      avatarEl.onerror = () => { avatarEl.src = "https://cdn.discordapp.com/embed/avatars/0.png"; };
+      avatarEl.onerror = () => { avatarEl.src = "https://cdn.discordapp.com/embed/avatars/0.png"; }
+
+    bindUserDropdown();
+;
     }
   } catch {
     safeShow(auth.btnLogin, true, "inline-flex");
     safeShow(auth.userBox, false);
   }
+}
+
+
+// ===== Dropdown do usuário (avatar) =====
+function bindUserDropdown(){
+  const userBox = byId("userBox");
+  const avatarBtn = byId("avatar");
+  if (!userBox || !avatarBtn) return;
+
+  // evita bind duplicado (o UI pode ser re-renderizado após login)
+  if (userBox.dataset.dropdownBound === "1") return;
+  userBox.dataset.dropdownBound = "1";
+
+  avatarBtn.style.cursor = "pointer";
+
+  on(avatarBtn, "click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    userBox.classList.toggle("open");
+  });
+
+  // fecha clicando fora
+  document.addEventListener("click", (e) => {
+    if (!userBox.classList.contains("open")) return;
+    if (userBox.contains(e.target)) return;
+    userBox.classList.remove("open");
+  });
+
+  // fecha no ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") userBox.classList.remove("open");
+  });
 }
 
 // ===== Guard (Login obrigatório para compras) =====
