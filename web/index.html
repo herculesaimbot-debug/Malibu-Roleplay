@@ -22,7 +22,11 @@
       </div>
     </div>
 
-    <nav class="nav">
+    <button class="hamburger" id="navToggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav" id="mainNav">
       <button class="nav-btn active" data-page="home">Página Inicial</button>
       <button class="nav-btn" data-page="store">Loja</button>
       <button class="nav-btn" data-page="rules">Regras</button>
@@ -522,6 +526,45 @@
     if(tabs.length){ show(tabs[0].getAttribute('data-tab')); }
   })();
 </script>
+
+
+<script>
+  (function () {
+    var toggle = document.getElementById('navToggle');
+    var nav = document.getElementById('mainNav') || document.querySelector('.nav');
+    if (!toggle || !nav) return;
+
+    function setOpen(open) {
+      nav.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    function isOpen() { return nav.classList.contains('open'); }
+
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!isOpen());
+    });
+
+    // fecha ao clicar em um item do menu (mobile)
+    nav.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('.nav-btn');
+      if (btn) setOpen(false);
+    });
+
+    // fecha ao clicar fora
+    document.addEventListener('click', function (e) {
+      if (!isOpen()) return;
+      if (e.target.closest && (e.target.closest('#mainNav') || e.target.closest('#navToggle'))) return;
+      setOpen(false);
+    });
+
+    // se voltar pra desktop, garante que não fica preso em "open"
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 720) setOpen(false);
+    });
+  })();
+</script>
+
 
 </body>
 </html>
