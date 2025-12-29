@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="pt-br">
 <head>
@@ -22,7 +21,11 @@
       </div>
     </div>
 
-    <nav class="nav">
+    <button class="hamburger" id="navToggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav" id="mainNav">
       <button class="nav-btn active" data-page="home">Página Inicial</button>
       <button class="nav-btn" data-page="store">Loja</button>
       <button class="nav-btn" data-page="rules">Regras</button>
@@ -44,6 +47,7 @@
       </div>
     </nav>
   </header>
+  <div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
 
   <main class="container">
     <section class="page show" id="page-home">
@@ -523,59 +527,54 @@
   })();
 </script>
 
+
 <script>
-  // Menu do usuário (avatar): abre/fecha ao clicar.
-  // Usamos delegação (document) porque o app.js pode recriar o userBox após o login.
-  (function(){
-    function getEls(){
-      return {
-        userBox: document.getElementById('userBox'),
-        btn: document.getElementById('userMenuBtn'),
-        menu: document.getElementById('userMenu')
-      };
+  (function () {
+    var toggle = document.getElementById('navToggle');
+    var nav = document.getElementById('mainNav') || document.querySelector('.nav');
+    var overlay = document.getElementById('navOverlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'navOverlay';
+      overlay.className = 'nav-overlay';
+      overlay.setAttribute('aria-hidden','true');
+      document.body.appendChild(overlay);
     }
-    function setOpen(open){
-      var els = getEls();
-      if(!els.userBox || !els.btn || !els.menu) return;
-      els.userBox.classList.toggle('open', open);
-      els.btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      els.menu.setAttribute('aria-hidden', open ? 'false' : 'true');
-    }
-    function isOpen(){
-      var els = getEls();
-      return !!(els.userBox && els.userBox.classList.contains('open'));
-    }
+    if (!toggle || !nav) return;
 
-    // clique no avatar
-    document.addEventListener('click', function(e){
-      var t = e.target;
-      if(!t || !t.closest) return;
-      var btn = t.closest('#userMenuBtn');
-      if(btn){
-        e.preventDefault();
-        e.stopPropagation();
-        setOpen(!isOpen());
-        return;
-      }
-      // clique fora fecha
-      if(isOpen() && !t.closest('#userBox')) setOpen(false);
+    function setOpen(open) {
+      nav.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      overlay.classList.toggle('show', open);
+      overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+      document.body.classList.toggle('menu-open', open);
+    }
+    function isOpen() { return nav.classList.contains('open'); }
+
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!isOpen());
     });
 
-    // fecha com ESC
-    document.addEventListener('keydown', function(e){
-      if(e.key === 'Escape') setOpen(false);
+    overlay.addEventListener('click', function () { setOpen(false); });
+
+    nav.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('.nav-btn');
+      if (btn) setOpen(false);
     });
 
-    // ao clicar em qualquer item do menu principal, fecha o dropdown
-    var nav = document.getElementById('mainNav');
-    if(nav){
-      nav.addEventListener('click', function(ev){
-        var btnNav = ev.target.closest && ev.target.closest('.nav-btn');
-        if(btnNav) setOpen(false);
-      });
-    }
+    document.addEventListener('click', function (e) {
+      if (!isOpen()) return;
+      if (e.target.closest && (e.target.closest('#mainNav') || e.target.closest('#navToggle'))) return;
+      setOpen(false);
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 720) setOpen(false);
+    });
   })();
 </script>
+
 
 </body>
 </html>
