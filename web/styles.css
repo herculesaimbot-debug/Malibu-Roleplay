@@ -30,18 +30,12 @@ body{
 .orb1{left:-360px; top:180px; background: rgba(176,38,255,1)}
 .orb2{right:-420px; top:-260px; background: rgba(124,92,255,1)}
 .topbar{
-  /* Header fixo: mantém logo + botões visíveis ao rolar a página */
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:1000;
+  position:fixed; top:0; left:0; right:0; z-index:10;
   display:flex; align-items:center; justify-content:space-between;
   padding:18px 22px;
   border-bottom:1px solid var(--line);
   background:rgba(5,6,18,.72);
   backdrop-filter: blur(12px);
-  box-shadow: 0 10px 30px rgba(0,0,0,.35);
 }
 .brand{display:flex; align-items:center; gap:12px}
 .logo{
@@ -55,17 +49,7 @@ body{
 }
 .brand-text .title{font-family:var(--font1); letter-spacing:.8px}
 .brand-text .subtitle{color:var(--muted); font-size:12px; margin-top:2px}
-.nav{
-  display:flex;
-  gap:10px;
-  flex-wrap:nowrap;
-  justify-content:flex-end;
-  /* evita que os botões “estiquem” quando o userbox (avatar) aparece */
-  align-items:center;
-  overflow:auto;
-  max-width: 70vw;
-  padding-bottom: 4px;
-}
+.nav{display:flex; gap:10px; flex-wrap:nowrap; justify-content:flex-end; overflow:auto; max-width: 70vw; padding-bottom: 4px;}
 .nav-btn{
   cursor:pointer;
   color:var(--text);
@@ -198,34 +182,6 @@ body{
 .tag{border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); padding:10px 12px; border-radius:16px; margin-bottom:10px;}
 .divider{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
 .codebox{display:block; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.10); padding:10px 12px; border-radius:14px; color:#FFFFFF;}
-
-/* =========================
-   SCROLLBAR INVISÍVEL (DESKTOP)
-   Obs: em muitos casos o scroll está no <html> (e não no body).
-   Também escondemos em containers com overflow (ex.: .nav).
-   ========================= */
-@media (min-width: 1024px) {
-  html, body {
-    scrollbar-width: none;       /* Firefox */
-    -ms-overflow-style: none;    /* IE/Edge legado */
-  }
-
-  html::-webkit-scrollbar,
-  body::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-  }
-
-  /* casos de overflow interno */
-  .nav {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .nav::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-  }
-}
 .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px}
 .feature h3{font-family:var(--font1); margin:4px 0 6px}
 .feature p{margin:0}
@@ -369,36 +325,66 @@ body{
 
 /* ===== Discord Login UI ===== */
 .userbox{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:8px 10px;
-  border-radius:14px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.10);
-  backdrop-filter: blur(6px);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
+
+/* só o avatar (clicável) */
+.userbox-trigger{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+  cursor: pointer;
+  padding: 0;
+}
+
 .userbox-avatar{
   width: 42px;
   height: 42px;
   border-radius: 999px;
   object-fit: cover;
-  border: 1px solid rgba(255,255,255,.16);
+  display:block;
 }
-.userbox-meta{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  line-height:1;
+
+/* dropdown do usuário */
+.userbox-menu{
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 260px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(15, 14, 23, .92);
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 22px 60px rgba(0,0,0,.55);
+  backdrop-filter: blur(10px);
+  display: none;
+  z-index: 1300;
 }
-.userbox-row{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.userbox-name{
-  font-weight: 700;
-  font-size: 14px;
+
+.userbox.open .userbox-menu{ display:block; }
+
+.userbox-meta{ display:flex; flex-direction:column; gap:10px; }
+.userbox-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.userbox-name{ font-weight:700; font-size:14px; }
+
+/* Quando o nav abre no mobile, o dropdown precisa ficar dentro do fluxo */
+@media (max-width: 720px){
+  .nav.open .userbox{ width:100%; }
+  .nav.open .userbox-menu{
+    position: static;
+    min-width: 0;
+    width: 100%;
+    margin-top: 10px;
+    display: none;
+  }
+  .nav.open .userbox.open .userbox-menu{ display:block; }
 }
 
 .discord-badge{
@@ -439,150 +425,3 @@ body::before{
 
 .nav::-webkit-scrollbar{height:6px}
 .nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10); border-radius:999px}
-
-
-
-/* ====== Overlay do Menu (Mobile) ====== */
-.nav-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  backdrop-filter: blur(2px);
-  opacity:0;
-  pointer-events:none;
-  transition: opacity .25s ease;
-  z-index:900;
-  display:none;
-}
-.nav-overlay.show{
-  opacity:1;
-  pointer-events:auto;
-}
-/* ====== Menu Hamburguer (Mobile) ====== */
-.hamburger{
-  display:none;
-  width:46px;
-  height:46px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.10);
-  background:rgba(255,255,255,.03);
-  cursor:pointer;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  padding:10px;
-}
-.hamburger span{
-  display:block;
-  width:100%;
-  height:2px;
-  background:rgba(255,255,255,.88);
-  border-radius:999px;
-  opacity:.9;
-}
-.hamburger:hover{transform:translateY(-1px); border-color:rgba(176,38,255,.35)}
-
-/* Mobile: menu vira dropdown */
-@media (max-width: 720px){
-  /* mostra overlay e trava scroll quando menu abrir */
-  .nav-overlay{display:block;}
-  body.menu-open{overflow:hidden;}
-
-  :root{ --topbar-h: 96px; }
-
-  .topbar{
-    padding:14px 16px;
-    align-items:center;
-  }
-
-  .hamburger{display:inline-flex}
-
-  /* Esconde nav por padrão e mostra só quando "open" */
-  .nav{
-    position:absolute;
-    top: calc(100% + 10px);
-    left: 12px;
-    right: 12px;
-    display:none;
-    flex-direction:column;
-    gap:10px;
-    padding:12px;
-    max-width:none;
-    overflow:visible;
-    border:1px solid rgba(255,255,255,.08);
-    background:rgba(5,6,18,.92);
-    backdrop-filter: blur(14px);
-    border-radius:18px;
-    box-shadow: 0 28px 90px rgba(0,0,0,.80);
-  }
-  .nav.open{display:flex}
-
-  .nav-btn{width:100%; justify-content:space-between;}
-  .userbox{width:100%; margin-top:4px;}
-}
-
-
-/* ===== User Dropdown (apenas avatar + menu ao clicar) ===== */
-.userbox{
-  position: relative;
-  padding: 0;
-  background: transparent;
-  border: none;
-  backdrop-filter: none;
-}
-.userbox-trigger{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  width: 46px;
-  height: 46px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.12);
-  cursor: pointer;
-}
-.userbox-trigger:hover{
-  background: rgba(255,255,255,.06);
-}
-.userbox-trigger:focus-visible{
-  outline: 2px solid rgba(176,38,255,.55);
-  outline-offset: 2px;
-}
-.userbox-trigger .userbox-avatar{
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-}
-.userbox-menu{
-  position: absolute;
-  right: 0;
-  top: calc(100% + 10px);
-  min-width: 260px;
-  padding: 12px;
-  border-radius: 16px;
-  background: rgba(10,10,18,.92);
-  border: 1px solid rgba(255,255,255,.12);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 18px 60px rgba(0,0,0,.45);
-  display: none;
-  z-index: 1200;
-}
-.userbox.open .userbox-menu{
-  display: block;
-}
-.userbox-menu .userbox-meta{
-  gap: 10px;
-}
-.userbox-menu .btn{
-  width: 100%;
-}
-
-/* No mobile com menu aberto, evita recorte */
-@media (max-width: 720px){
-  .nav.open .userbox{ width: 100%; justify-content: flex-start; }
-  .nav.open .userbox-menu{
-    position: static;
-    width: 100%;
-    margin-top: 10px;
-  }
-}
