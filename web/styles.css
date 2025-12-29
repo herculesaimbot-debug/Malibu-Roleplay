@@ -30,12 +30,18 @@ body{
 .orb1{left:-360px; top:180px; background: rgba(176,38,255,1)}
 .orb2{right:-420px; top:-260px; background: rgba(124,92,255,1)}
 .topbar{
-  position:fixed; top:0; left:0; right:0; z-index:10;
+  /* Header fixo: mantém logo + botões visíveis ao rolar a página */
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
   display:flex; align-items:center; justify-content:space-between;
   padding:18px 22px;
   border-bottom:1px solid var(--line);
   background:rgba(5,6,18,.72);
   backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
 }
 .brand{display:flex; align-items:center; gap:12px}
 .logo{
@@ -49,7 +55,17 @@ body{
 }
 .brand-text .title{font-family:var(--font1); letter-spacing:.8px}
 .brand-text .subtitle{color:var(--muted); font-size:12px; margin-top:2px}
-.nav{display:flex; gap:10px; flex-wrap:nowrap; justify-content:flex-end; overflow:auto; max-width: 70vw; padding-bottom: 4px;}
+.nav{
+  display:flex;
+  gap:10px;
+  flex-wrap:nowrap;
+  justify-content:flex-end;
+  /* evita que os botões “estiquem” quando o userbox (avatar) aparece */
+  align-items:center;
+  overflow:auto;
+  max-width: 70vw;
+  padding-bottom: 4px;
+}
 .nav-btn{
   cursor:pointer;
   color:var(--text);
@@ -182,6 +198,34 @@ body{
 .tag{border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); padding:10px 12px; border-radius:16px; margin-bottom:10px;}
 .divider{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
 .codebox{display:block; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.10); padding:10px 12px; border-radius:14px; color:#FFFFFF;}
+
+/* =========================
+   SCROLLBAR INVISÍVEL (DESKTOP)
+   Obs: em muitos casos o scroll está no <html> (e não no body).
+   Também escondemos em containers com overflow (ex.: .nav).
+   ========================= */
+@media (min-width: 1024px) {
+  html, body {
+    scrollbar-width: none;       /* Firefox */
+    -ms-overflow-style: none;    /* IE/Edge legado */
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  /* casos de overflow interno */
+  .nav {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .nav::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}
 .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px}
 .feature h3{font-family:var(--font1); margin:4px 0 6px}
 .feature p{margin:0}
@@ -397,6 +441,23 @@ body::before{
 .nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.10); border-radius:999px}
 
 
+
+/* ====== Overlay do Menu (Mobile) ====== */
+.nav-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  backdrop-filter: blur(2px);
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .25s ease;
+  z-index:900;
+  display:none;
+}
+.nav-overlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
 /* ====== Menu Hamburguer (Mobile) ====== */
 .hamburger{
   display:none;
@@ -423,6 +484,10 @@ body::before{
 
 /* Mobile: menu vira dropdown */
 @media (max-width: 720px){
+  /* mostra overlay e trava scroll quando menu abrir */
+  .nav-overlay{display:block;}
+  body.menu-open{overflow:hidden;}
+
   :root{ --topbar-h: 96px; }
 
   .topbar{
